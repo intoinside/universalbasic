@@ -26,10 +26,20 @@ typedef enum {
     TOKEN_UNKNOWN
 } TokenType;
 
+#ifdef __C64__
+    typedef int BasicNumber;
+    #define BASIC_NUMBER_FMT "%d"
+    #define TOKEN_MAX_STR 80
+#else
+    typedef double BasicNumber;
+    #define BASIC_NUMBER_FMT "%g"
+    #define TOKEN_MAX_STR 256
+#endif
+
 typedef struct {
     TokenType type;
-    char string_value[256];
-    double number_value;
+    char string_value[TOKEN_MAX_STR];
+    BasicNumber number_value;
 } Token;
 
 // Program Line Structure
@@ -54,7 +64,7 @@ void basic_eval_line(BasicState *state, const char *line);
 // Component Interfaces
 // Tokenizer
 void tokenizer_init(const char *input);
-Token tokenizer_next(void);
+void tokenizer_next(Token *token);
 
 // Program Storage
 void program_add_line(BasicState *state, int line_number, const char *source);

@@ -4,13 +4,18 @@
 #include "basic.h"
 
 void program_add_line(BasicState *state, int line_number, const char *source) {
-    ProgramLine *new_line = (ProgramLine *)malloc(sizeof(ProgramLine));
+    ProgramLine *current;
+    ProgramLine *prev;
+    ProgramLine *new_line;
+    
+    new_line = (ProgramLine *)malloc(sizeof(ProgramLine));
     new_line->line_number = line_number;
-    new_line->source = strdup(source);
+    new_line->source = malloc(strlen(source) + 1);
+    strcpy(new_line->source, source);
     new_line->next = NULL;
 
-    ProgramLine *current = state->program_head;
-    ProgramLine *prev = NULL;
+    current = state->program_head;
+    prev = NULL;
 
     // Remove existing line if present
     while (current) {
@@ -47,8 +52,9 @@ void program_add_line(BasicState *state, int line_number, const char *source) {
 
 void program_clear(BasicState *state) {
     ProgramLine *current = state->program_head;
+    ProgramLine *next; 
     while (current) {
-        ProgramLine *next = current->next;
+        next = current->next;
         free(current->source);
         free(current);
         current = next;
@@ -58,10 +64,11 @@ void program_clear(BasicState *state) {
 
 void program_list(BasicState *state) {
     ProgramLine *current = state->program_head;
-    char buffer[512];
+    char buffer[16];
     while (current) {
-        sprintf(buffer, "%d %s", current->line_number, current->source);
+        sprintf(buffer, "%d ", current->line_number);
         state->pal->print(buffer);
+        state->pal->print(current->source);
         state->pal->newline();
         current = current->next;
     }

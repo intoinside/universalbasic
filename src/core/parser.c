@@ -4,8 +4,9 @@
 #include "basic.h"
 
 void basic_eval_line(BasicState *state, const char *line) {
+    Token token;
     tokenizer_init(line);
-    Token token = tokenizer_next();
+    tokenizer_next(&token);
 
     if (token.type == TOKEN_NUMBER) {
         // Line number processing
@@ -24,13 +25,13 @@ void basic_eval_line(BasicState *state, const char *line) {
     // Direct mode execution or statement execution
     while (token.type != TOKEN_EOF && token.type != TOKEN_CR) {
         if (token.type == TOKEN_PRINT) {
-            token = tokenizer_next();
+            tokenizer_next(&token);
             if (token.type == TOKEN_STRING) {
                 state->pal->print(token.string_value);
                 state->pal->newline();
             } else if (token.type == TOKEN_NUMBER) {
                 char buf[64];
-                sprintf(buf, "%g", token.number_value);
+                sprintf(buf, BASIC_NUMBER_FMT, token.number_value);
                 state->pal->print(buf);
                 state->pal->newline();
             }
@@ -44,7 +45,7 @@ void basic_eval_line(BasicState *state, const char *line) {
              // No-op in direct mode, stops run in program mode
         }
         
-        token = tokenizer_next();
+        tokenizer_next(&token);
     }
 }
 

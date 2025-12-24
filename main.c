@@ -2,24 +2,32 @@
 #include <string.h>
 #include "basic.h"
 
+#ifdef __C64__
+extern basic_pal_t pal_c64;
+#define CURRENT_PAL pal_c64
+#else
 extern basic_pal_t pal_stdio;
+#define CURRENT_PAL pal_stdio
+#endif
 
 int main() {
     BasicState state;
-    char buffer[1024];
+    static char buffer[256];
+    char *input;
+    size_t len;
 
-    basic_init(&state, &pal_stdio);
+    basic_init(&state, &CURRENT_PAL);
 
     state.pal->print("BASIC 2.0 (Retro-Oriented) - Ready.\n");
 
     while (1) {
         state.pal->print("READY.\n> ");
-        char *input = state.pal->input_line(buffer, sizeof(buffer));
+        input = state.pal->input_line(buffer, sizeof(buffer));
         
         if (!input) break; // EOF
 
         // Remove newline
-        size_t len = strlen(input);
+        len = strlen(input);
         if (len > 0 && input[len-1] == '\n') {
             input[len-1] = '\0';
         }
