@@ -44,7 +44,7 @@ void tokenizer_next(Token *token) {
             if (i >= TOKEN_MAX_STR - 1) break; 
         }
         token->string_value[i] = '\0';
-#ifdef __C64__
+#if defined(__C64__) || defined(__C128__)
         token->number_value = atoi(token->string_value);
 #else
         token->number_value = atof(token->string_value);

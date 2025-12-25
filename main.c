@@ -5,6 +5,9 @@
 #ifdef __C64__
 extern basic_pal_t pal_c64;
 #define CURRENT_PAL pal_c64
+#elif defined(__C128__)
+extern basic_pal_t pal_c128;
+#define CURRENT_PAL pal_c128
 #else
 extern basic_pal_t pal_stdio;
 #define CURRENT_PAL pal_stdio

@@ -26,7 +26,7 @@ typedef enum {
     TOKEN_UNKNOWN
 } TokenType;
 
-#ifdef __C64__
+#if defined(__C64__) || defined(__C128__)
     typedef int BasicNumber;
     #define BASIC_NUMBER_FMT "%d"
     #define TOKEN_MAX_STR 80
