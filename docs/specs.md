@@ -37,9 +37,6 @@ Questo approccio consente portabilità, manutenibilità ed estensione graduale.
 | Platform-specific Backend |
 +----------------------------------+
 
-markdown
-Copia codice
-
 ---
 
 ## 4. BASIC Core (livello comune)
@@ -129,82 +126,64 @@ typedef struct {
 ```
 
 ### 5.3 Servizi forniti (fase iniziale)
-Output testuale (PRINT)
 
-Input da tastiera (INPUT)
-
-Gestione newline
-
-Gestione errori di sistema di base
+- Output testuale (PRINT)
+- Input da tastiera (INPUT)
+- Gestione newline
+- Gestione errori di sistema di base
 
 ## 6. Platform-specific Backend
 
 ### 6.1 Scopo
+
 Ogni backend:
 
-Implementa la PAL
-
-Gestisce l’I/O reale
-
-Adatta il comportamento all’ambiente
-
-Non contiene logica BASIC
+- Implementa la PAL
+- Gestisce l’I/O reale
+- Adatta il comportamento all’ambiente
+- Non contiene logica BASIC
 
 ### 6.2 Esempi di piattaforme target
-Linux / macOS (stdio)
 
-Windows (console)
-
-MS-DOS
-
-AmigaOS
-
-Atari ST
-
-CP/M
-
-Sistemi bare metal con I/O minimale
+- Linux / macOS (stdio)
+- Windows (console)
+- MS-DOS
+- AmigaOS
+- Atari ST
+- CP/M
+- Sistemi bare metal con I/O minimale
 
 ## 7. Evoluzione futura (fuori scope iniziale)
-PEEK, POKE
 
-Memoria virtuale 64 KB
-
-SYS
-
-LOAD, SAVE
-
-Floating point Commodore a 5 byte
-
-Grafica e suono
-
-Compatibilità binaria token C64
+- PEEK, POKE
+- Memoria virtuale 64 KB
+- SYS
+- LOAD, SAVE
+- Floating point Commodore a 5 byte
+- Grafica e suono
+- Compatibilità binaria token C64
 
 ## 8. Linguaggio di implementazione
-C (C89 / C99)
 
-Motivazioni:
+- C (C89 / C99)
 
-Massima portabilità
+### 8.1 Motivazioni:
 
-Supporto su architetture retro
-
-Controllo diretto della memoria
-
-Nessuna dipendenza pesante
+- Massima portabilità
+- Supporto su architetture retro
+- Controllo diretto della memoria
+- Nessuna dipendenza pesante
 
 ## 9. Principi di progettazione
-Separazione netta delle responsabilità
 
-Nessuna dipendenza circolare
-
-Estendibilità incrementale
-
-Compatibilità prima della completezza
-
-Chiarezza prima delle prestazioni
+- Separazione netta delle responsabilità
+- Nessuna dipendenza circolare
+- Estendibilità incrementale
+- Compatibilità prima della completezza
+- Chiarezza prima delle prestazioni
 
 ## 10. Stato del progetto
+
 Fase: Design iniziale
 
 Obiettivo: Interprete BASIC funzionante su console testuale
@@ -215,13 +194,3 @@ Focus: architettura e core linguistico
 Questo progetto non è un emulatore C64, ma un interprete BASIC
 retro-compatibile ispirato al BASIC 2.0, progettato per vivere su
 piattaforme diverse mantenendo lo spirito originale del linguaggio.
-
----
-
-### Prossimo passo
-Ora che abbiamo **una base solida e corretta**, possiamo:
-
-- rivedere **compatibilità vs semplicità**
-- definire una **roadmap a milestone**
-- aggiungere una sezione **Non-Goals**
-- oppure passare alla **struttura del codice**
