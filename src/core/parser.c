@@ -141,6 +141,36 @@ BasicNumber evaluate_expression(BasicState *state) {
     return 0; 
 }
 
+/* Evaluate a condition (used by IF) - returns non-zero if true */
+int eval_condition(BasicState *state, Token *token) {
+    BasicNumber left, right;
+    TokenType op;
+    
+    left = expr_parse_expression(state, token);
+    
+    /* Check for relational operator */
+    op = token->type;
+    if (op == TOKEN_EQUALS || op == TOKEN_LT || op == TOKEN_GT ||
+        op == TOKEN_LE || op == TOKEN_GE || op == TOKEN_NE) {
+        tokenizer_next(token);
+        right = expr_parse_expression(state, token);
+        
+        switch (op) {
+            case TOKEN_EQUALS: return (left == right);
+            case TOKEN_LT: return (left < right);
+            case TOKEN_GT: return (left > right);
+            case TOKEN_LE: return (left <= right);
+            case TOKEN_GE: return (left >= right);
+            case TOKEN_NE: return (left != right);
+            default: return 0;
+        }
+    }
+    
+    /* No relational operator, treat as boolean (non-zero = true) */
+    return (left != 0);
+}
+
+
 void basic_eval_line(BasicState *state, const char *line) {
     Token token;
     tokenizer_init(line);
@@ -294,6 +324,104 @@ void basic_eval_line(BasicState *state, const char *line) {
              } else {
                  state->pal->print_error("?UNDEF'D STATEMENT ERROR");
              }
+        } else if (token.type == TOKEN_IF) {
+            /* IF condition THEN line_number or statement */
+            tokenizer_next(&token);
+            if (eval_condition(state, &token)) {
+                /* Condition true */
+                if (token.type == TOKEN_THEN) {
+                    tokenizer_next(&token);
+                    if (token.type == TOKEN_NUMBER) {
+                        /* GOTO line number */
+                        ProgramLine *dest = program_find_line(state, (int)token.number_value);
+                        if (dest) {
+                            state->jump_target = dest;
+                        }
+                    }
+                    /* else: inline statement follows, will be executed */
+                }
+            } else {
+                /* Condition false - skip rest of line */
+                break;
+            }
+        } else if (token.type == TOKEN_FOR) {
+            /* FOR var = start TO end [STEP increment] */
+            BasicNumber *var_ptr;
+            BasicNumber start_val, end_val, step_val;
+            Token var_token;
+            
+            tokenizer_next(&token);
+            if (token.type != TOKEN_IDENTIFIER) {
+                state->pal->print_error("?SYNTAX ERROR");
+                break;
+            }
+            
+            var_token = token;
+            var_ptr = basic_get_var(state, var_token.string_value);
+            
+            tokenizer_next(&token);
+            if (token.type != TOKEN_EQUALS) {
+                state->pal->print_error("?SYNTAX ERROR");
+                break;
+            }
+            
+            tokenizer_next(&token);
+            start_val = expr_parse_expression(state, &token);
+            
+            if (token.type != TOKEN_TO) {
+                state->pal->print_error("?SYNTAX ERROR");
+                break;
+            }
+            
+            tokenizer_next(&token);
+            end_val = expr_parse_expression(state, &token);
+            
+            step_val = 1;
+            if (token.type == TOKEN_STEP) {
+                tokenizer_next(&token);
+                step_val = expr_parse_expression(state, &token);
+            }
+            
+            /* Set loop variable */
+            if (var_ptr) *var_ptr = start_val;
+            
+            /* Push to FOR stack */
+            if (state->for_stack_ptr < MAX_FOR_LOOPS) {
+                strncpy(state->for_stack[state->for_stack_ptr].var_name, var_token.string_value, 2);
+                state->for_stack[state->for_stack_ptr].var_name[2] = '\0';
+                state->for_stack[state->for_stack_ptr].end_value = end_val;
+                state->for_stack[state->for_stack_ptr].step_value = step_val;
+                state->for_stack[state->for_stack_ptr].loop_start = state->program_head; /* Will be set by runtime */
+                state->for_stack_ptr++;
+            }
+        } else if (token.type == TOKEN_NEXT) {
+            /* NEXT [var] */
+            BasicNumber *var_ptr;
+            ForLoopContext *loop;
+            
+            tokenizer_next(&token);
+            
+            if (state->for_stack_ptr == 0) {
+                state->pal->print_error("?NEXT WITHOUT FOR ERROR");
+                break;
+            }
+            
+            loop = &state->for_stack[state->for_stack_ptr - 1];
+            var_ptr = basic_get_var(state, loop->var_name);
+            
+            if (var_ptr) {
+                *var_ptr += loop->step_value;
+                
+                /* Check if loop should continue */
+                if ((loop->step_value > 0 && *var_ptr <= loop->end_value) ||
+                    (loop->step_value < 0 && *var_ptr >= loop->end_value)) {
+                    /* Continue loop - jump back */
+                    state->jump_target = loop->loop_start;
+                } else {
+                    /* Exit loop */
+                    state->for_stack_ptr--;
+                }
+            }
         } else if (token.type == TOKEN_NEW) {
             program_clear(state);
         } else if (token.type == TOKEN_LOAD) {
@@ -324,6 +452,9 @@ void basic_eval_line(BasicState *state, const char *line) {
             }
         } else if (token.type == TOKEN_END) {
              // No-op
+        } else if (token.type == TOKEN_REM) {
+             /* Comment - skip rest of line */
+             break;
         }
         
         tokenizer_next(&token);

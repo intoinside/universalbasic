@@ -21,6 +21,7 @@ typedef enum {
     TOKEN_NEW,
     TOKEN_LOAD,
     TOKEN_SAVE,
+    TOKEN_REM,
     TOKEN_EQUALS,
     TOKEN_PLUS,
     TOKEN_MINUS,
@@ -29,6 +30,17 @@ typedef enum {
     TOKEN_CARET,
     TOKEN_LPAREN,
     TOKEN_RPAREN,
+    // Comparison operators
+    TOKEN_LT,        // <
+    TOKEN_GT,        // >
+    TOKEN_LE,        // <=
+    TOKEN_GE,        // >=
+    TOKEN_NE,        // <>
+    // Loop keywords
+    TOKEN_FOR,
+    TOKEN_TO,
+    TOKEN_STEP,
+    TOKEN_NEXT,
     // Functions
     TOKEN_SIN,
     TOKEN_COS,
@@ -66,6 +78,15 @@ typedef struct ProgramLine {
     struct ProgramLine *next;
 } ProgramLine;
 
+// FOR loop context
+#define MAX_FOR_LOOPS 10
+typedef struct {
+    char var_name[3];           // Variable name (e.g., "I", "J")
+    BasicNumber end_value;      // TO value
+    BasicNumber step_value;     // STEP value (default 1)
+    ProgramLine *loop_start;    // Line after FOR statement
+} ForLoopContext;
+
 // Interpreter State
 typedef struct {
     basic_pal_t *pal;
@@ -74,6 +95,8 @@ typedef struct {
     BasicNumber variables[26 * 37]; // Support for A-Z + (A-Z)(A-Z0-9)
     char *str_variables[26 * 37];
     struct ProgramLine *jump_target;
+    ForLoopContext for_stack[MAX_FOR_LOOPS];
+    int for_stack_ptr;          // Current FOR loop depth
 } BasicState;
 // Core Functions
 void basic_init(BasicState *state, basic_pal_t *pal);

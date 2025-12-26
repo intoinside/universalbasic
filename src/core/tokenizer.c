@@ -80,6 +80,7 @@ void tokenizer_next(Token *token) {
         else if (strcmp(token->string_value, "NEW") == 0) token->type = TOKEN_NEW;
         else if (strcmp(token->string_value, "LOAD") == 0) token->type = TOKEN_LOAD;
         else if (strcmp(token->string_value, "SAVE") == 0) token->type = TOKEN_SAVE;
+        else if (strcmp(token->string_value, "REM") == 0) token->type = TOKEN_REM;
         else if (strcmp(token->string_value, "SIN") == 0) token->type = TOKEN_SIN;
         else if (strcmp(token->string_value, "COS") == 0) token->type = TOKEN_COS;
         else if (strcmp(token->string_value, "TAN") == 0) token->type = TOKEN_TAN;
@@ -89,10 +90,14 @@ void tokenizer_next(Token *token) {
         else if (strcmp(token->string_value, "EXP") == 0) token->type = TOKEN_EXP;
         else if (strcmp(token->string_value, "ABS") == 0) token->type = TOKEN_ABS;
         else if (strcmp(token->string_value, "INT") == 0) token->type = TOKEN_INT;
+        else if (strcmp(token->string_value, "FOR") == 0) token->type = TOKEN_FOR;
+        else if (strcmp(token->string_value, "TO") == 0) token->type = TOKEN_TO;
+        else if (strcmp(token->string_value, "STEP") == 0) token->type = TOKEN_STEP;
+        else if (strcmp(token->string_value, "NEXT") == 0) token->type = TOKEN_NEXT;
         else token->type = TOKEN_IDENTIFIER;
 
     } else {
-         // Single character tokens
+         // Single or double character tokens
          if (c == '=') token->type = TOKEN_EQUALS;
          else if (c == '+') token->type = TOKEN_PLUS;
          else if (c == '-') token->type = TOKEN_MINUS;
@@ -101,6 +106,33 @@ void tokenizer_next(Token *token) {
          else if (c == '^') token->type = TOKEN_CARET;
          else if (c == '(') token->type = TOKEN_LPAREN;
          else if (c == ')') token->type = TOKEN_RPAREN;
+         else if (c == '<') {
+             current_pos++;
+             if (current_input[current_pos] == '=') {
+                 token->type = TOKEN_LE;
+                 current_pos++;
+             } else if (current_input[current_pos] == '>') {
+                 token->type = TOKEN_NE;
+                 current_pos++;
+             } else {
+                 token->type = TOKEN_LT;
+             }
+             token->string_value[0] = '<';
+             token->string_value[1] = '\0';
+             return;
+         }
+         else if (c == '>') {
+             current_pos++;
+             if (current_input[current_pos] == '=') {
+                 token->type = TOKEN_GE;
+                 current_pos++;
+             } else {
+                 token->type = TOKEN_GT;
+             }
+             token->string_value[0] = '>';
+             token->string_value[1] = '\0';
+             return;
+         }
          else if (c == '\n' || c == '\r') token->type = TOKEN_CR;
          
          token->string_value[0] = c;

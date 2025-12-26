@@ -11,6 +11,7 @@ void basic_init(BasicState *state, basic_pal_t *pal) {
         state->variables[i] = 0;
         state->str_variables[i] = NULL;
     }
+    state->for_stack_ptr = 0;
 }
 
 BasicNumber *basic_get_var(BasicState *state, const char *name) {
@@ -82,26 +83,28 @@ char **basic_get_str_var(BasicState *state, const char *name) {
 
 void basic_run(BasicState *state) {
     ProgramLine *current = state->program_head;
+    int old_for_depth;
     state->jump_target = NULL;
 
     while (current && !state->should_exit) {
-        // Execute line
-        // NOTE: This re-tokenizes every time, which is inefficient but simple for now
-        // A real interpreter might tokenize once and store tokens (Phase 2 optimization)
+        /* Save FOR depth before executing line */
+        old_for_depth = state->for_stack_ptr;
         
-        // We need to bypass the line number parsing of eval_line, 
-        // so we call specific logic or just use eval_line but treat it as direct commands
-        
-        // Quick hack: Just interpret the source using eval_line logic 
-        // essentially treating the body of the line as a command
+        /* Execute line */
         basic_eval_line(state, current->source);
+        
+        /* Update loop_start if FOR was pushed */
+        if (state->for_stack_ptr > old_for_depth) {
+            state->for_stack[state->for_stack_ptr - 1].loop_start = current->next;
+        }
         
         if (state->jump_target) {
             current = state->jump_target;
-            state->jump_target = NULL; // Clear jump
+            state->jump_target = NULL;
         } else {
             current = current->next;
         }
     }
-    state->should_exit = 0; // Reset for next run
+    state->should_exit = 0;
+    state->for_stack_ptr = 0; /* Clear FOR stack on program end */
 }
