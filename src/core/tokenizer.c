@@ -78,6 +78,15 @@ void tokenizer_next(Token *token) {
         else if (strcmp(token->string_value, "RUN") == 0) token->type = TOKEN_RUN;
         else if (strcmp(token->string_value, "END") == 0) token->type = TOKEN_END;
         else if (strcmp(token->string_value, "NEW") == 0) token->type = TOKEN_NEW;
+        else if (strcmp(token->string_value, "SIN") == 0) token->type = TOKEN_SIN;
+        else if (strcmp(token->string_value, "COS") == 0) token->type = TOKEN_COS;
+        else if (strcmp(token->string_value, "TAN") == 0) token->type = TOKEN_TAN;
+        else if (strcmp(token->string_value, "ATN") == 0) token->type = TOKEN_ATN;
+        else if (strcmp(token->string_value, "SQRT") == 0) token->type = TOKEN_SQRT;
+        else if (strcmp(token->string_value, "LOG") == 0) token->type = TOKEN_LOG;
+        else if (strcmp(token->string_value, "EXP") == 0) token->type = TOKEN_EXP;
+        else if (strcmp(token->string_value, "ABS") == 0) token->type = TOKEN_ABS;
+        else if (strcmp(token->string_value, "INT") == 0) token->type = TOKEN_INT;
         else token->type = TOKEN_IDENTIFIER;
 
     } else {
@@ -85,6 +94,11 @@ void tokenizer_next(Token *token) {
          if (c == '=') token->type = TOKEN_EQUALS;
          else if (c == '+') token->type = TOKEN_PLUS;
          else if (c == '-') token->type = TOKEN_MINUS;
+         else if (c == '*') token->type = TOKEN_ASTERISK;
+         else if (c == '/') token->type = TOKEN_SLASH;
+         else if (c == '^') token->type = TOKEN_CARET;
+         else if (c == '(') token->type = TOKEN_LPAREN;
+         else if (c == ')') token->type = TOKEN_RPAREN;
          else if (c == '\n' || c == '\r') token->type = TOKEN_CR;
          
          token->string_value[0] = c;

@@ -22,6 +22,21 @@ typedef enum {
     TOKEN_EQUALS,
     TOKEN_PLUS,
     TOKEN_MINUS,
+    TOKEN_ASTERISK,
+    TOKEN_SLASH,
+    TOKEN_CARET,
+    TOKEN_LPAREN,
+    TOKEN_RPAREN,
+    // Functions
+    TOKEN_SIN,
+    TOKEN_COS,
+    TOKEN_TAN,
+    TOKEN_ATN,
+    TOKEN_SQRT,
+    TOKEN_LOG,
+    TOKEN_EXP,
+    TOKEN_ABS,
+    TOKEN_INT,
     TOKEN_CR, // Carriage return / End of line
     TOKEN_UNKNOWN
 } TokenType;
@@ -61,6 +76,7 @@ void basic_init(BasicState *state, basic_pal_t *pal);
 void basic_run(BasicState *state);
 void basic_eval_line(BasicState *state, const char *line);
 BasicNumber *basic_get_var(BasicState *state, const char *name);
+BasicNumber evaluate_expression(BasicState *state);
 
 // Component Interfaces
 // Tokenizer
