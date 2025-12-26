@@ -1,81 +1,119 @@
 # UniversalBasic - Interprete BASIC 2.0 Cross-Platform
 
-UniversalBasic è un interprete BASIC ispirato al **Commodore BASIC 2.0**, progettato per essere portabile, modulare ed estendibile. Il progetto mira a creare un interprete che possa girare sia su sistemi moderni (Windows, Linux, macOS) tramite API standard, sia su hardware retro come il Commodore 64 e 128.
+UniversalBasic è un interprete BASIC ispirato al **Commodore BASIC 2.0**, progettato per essere portabile, modulare ed estendibile. Il progetto mira a creare un interprete che possa girare contemporaneamente su sistemi moderni (Windows, Linux, macOS) tramite API standard, e su hardware retro come il Commodore 64 e 128, mantenendo un'unica codebase C89.
 
-## 🚀 Caratteristiche
+## 🚀 Caratteristiche Implementate
 
-*   **Core BASIC 2.0 Completo**: Implementazione fedele del linguaggio BASIC 2.0 (variabili, stringhe, array, controllo di flusso).
-*   **Architettura Modulare**: Separazione netta tra il *Core* del linguaggio e il *Platform Abstraction Layer (PAL)*.
-*   **Cross-Platform**:
-    *   💻 **PC Moderni**: Backend basato su `stdio` per Windows e Unix-like.
-    *   🕹️ **Retro**: Supporto nativo per C64 e C128 tramite `cc65`.
-*   **Comandi Supportati**: `PRINT`, `INPUT`, `LET`, `IF...THEN`, `FOR...NEXT`, `GOTO`, `GOSUB/RETURN`, `REM`, `DATA/READ/RESTORE`, `STOP`, `END`, `NEW`, `LIST`, `RUN`.
+*   **Core BASIC 2.0**: Struttura modulare con Tokenizer, Parser (Recursive Descent) e Runtime separati.
+*   **Gestione Variabili**:
+    *   **Numeriche**: Supporto standard con precisione `double` su PC e `int` su piattaforme retro. Nomi variabili significativi sui primi 2 caratteri (es. `AA`, `A1`).
+    *   **Stringhe ($)**: Supporto completo per variabili alfanumeriche (es. `A$`), assegnazione e concatenazione dinamica (`+`).
+*   **Matematica e Funzioni**:
+    *   Operatori: `+`, `-`, `*`, `/`, `^` (potenza), parentesi.
+    *   Funzioni Trigonometriche/Matematiche: `SIN`, `COS`, `TAN`, `ATN`, `SQRT`, `LOG`, `EXP`, `ABS`, `INT`.
+*   **Controllo di Flusso**:
+    *   `GOTO <linea>`: Salto incondizionato.
+    *   `RUN`: Esecuzione programma.
+    *   `STOP`, `END`.
+*   **Comandi di Sistema**: `LIST`, `NEW`, `PRINT` (con supporto espressioni multiple).
+*   **Cross-Platform Pura**:
+    *   **PC (Windows/Unix)**: Backend `stdio` per I/O standard.
+    *   **C64/C128**: Backend nativo ottimizzato che utilizza le routine del Kernal Commodore (via `cc65`).
+
+## 🔮 Roadmap e Sviluppi Futuri
+
+*   **Android Porting**: È previsto un porting su Android utilizzando l'NDK. L'architettura modulare permetterà di sostituire il layer di I/O (PAL) per interfacciarsi con una UI Java/Kotlin tramite JNI. Per i dettagli tecnici, vedere la documentazione in `docs/android_porting.md`.
+*   Completamento set istruzioni BASIC (`IF..THEN`, `FOR..NEXT`, `GOSUB`).
+*   Gestione Array.
 
 ## 🛠️ Compilazione
 
-Il progetto include script di build per diverse piattaforme. Assicurati di avere gli strumenti necessari installati.
+### Requisiti
+*   **GCC**: Per build PC (Windows/Linux).
+*   **cc65**: Toolchain necessaria per i target Commodore 64/128.
 
-### Prerequisiti
-*   **GCC**: Per compilare la versione PC (Windows/Linux).
-*   **cc65**: Per compilare le versioni Commodore 64/128 (opzionale).
+### Istruzioni (Windows)
 
-### Windows
-Per compilare ed eseguire su Windows, utilizza lo script batch fornito:
+1.  **Versione PC**:
+    ```cmd
+    .\build.bat
+    ```
+    Genera `basic.exe`.
 
-```cmd
-.\build.bat
-```
-Questo genererà l'eseguibile `basic.exe`.
-
-### Linux / macOS
-Utilizza il `Makefile` incluso:
-
-```bash
-make
-./basic.exe
-```
-
-### Commodore 64 / 128
-Per generare i file `.prg` per C64 o C128 (richiede `cc65` nel PATH):
-
-*   **C64**:
+2.  **Versione Commodore 64**:
     ```cmd
     .\build_c64.bat
     ```
-    Genera `basic.prg`.
+    Genera `basic.prg` (eseguibile su VICE o hardware reale).
 
-*   **C128**:
+3.  **Versione Commodore 128**:
     ```cmd
     .\build_c128.bat
     ```
     Genera `basic128.prg`.
 
-## 📖 Utilizzo
+## 📂 Struttura
+*   `src/core/`: Logica indipendente dalla piattaforma (Tokenizer, Parser, Runtime).
+*   `src/platform/`: Implementazioni del PAL (`stdio`, `c64`, `c128`).
+*   `include/`: Definizioni interfaccia e strutture dati.
 
-Avvia l'interprete (`basic.exe` o caricando il `.prg` in un emulatore). Vedrai il prompt:
+---
 
-```basic
-BASIC 2.0 (Retro-Oriented) - Ready.
-READY.
->
-```
+# UniversalBasic - Cross-Platform BASIC 2.0 Interpreter (English)
 
-Puoi inserire comandi diretti o scrivere programmi con numeri di linea.
+UniversalBasic is a BASIC interpreter inspired by **Commodore BASIC 2.0**, designed for portability, modularity, and extensibility. The project aims to create an interpreter capable of running on modern systems (Windows, Linux, macOS) via standard APIs, as well as on retro hardware like the Commodore 64 and 128, maintaining a single C89 codebase.
 
-### Esempio
+## 🚀 Key Features
 
-```basic
-10 PRINT "CIAO MONDO!"
-20 GOTO 10
-RUN
-```
+*   **BASIC 2.0 Core**: Modular structure with separate Tokenizer, Parser (Recursive Descent), and Runtime.
+*   **Variable Management**:
+    *   **Numeric**: Standard support with `double` precision on PC and `int` on retro platforms. Two-character significant variable names (e.g., `AA`, `A1`).
+    *   **Strings ($)**: Full support for alphanumeric variables (e.g., `A$`), assignment, and dynamic concatenation (`+`).
+*   **Math & Functions**:
+    *   Operators: `+`, `-`, `*`, `/`, `^` (power), parentheses.
+    *   Math/Trig Functions: `SIN`, `COS`, `TAN`, `ATN`, `SQRT`, `LOG`, `EXP`, `ABS`, `INT`.
+*   **Flow Control**:
+    *   `GOTO <line>`: Unconditional jump.
+    *   `RUN`: Program execution.
+    *   `STOP`, `END`.
+*   **System Commands**: `LIST`, `NEW`, `PRINT` (with multi-expression support).
+*   **Pure Cross-Platform**:
+    *   **PC (Windows/Unix)**: `stdio` backend for standard I/O.
+    *   **C64/C128**: Native optimized backend utilizing Commodore Kernal routines (via `cc65`).
 
-Per uscire dall'interprete su PC, digita `EXIT` o `QUIT`.
+## 🔮 Roadmap / Future Development
 
-## 📂 Struttura del Progetto
+*   **Android Porting**: A port to Android using the NDK is planned. The modular architecture enables swapping the I/O layer (PAL) to interface with a Java/Kotlin UI via JNI. See `docs/android_porting.md` for technical details.
+*   Complete BASIC instruction set (`IF..THEN`, `FOR..NEXT`, `GOSUB`).
+*   Array handling.
 
-*   `src/core/`: Logica del linguaggio BASIC (Tokenizer, Parser, Runtime), indipendente dalla piattaforma.
-*   `src/platform/`: Backend specifici per le piattaforme (es. `stdio` per PC, `c64` per Commodore).
-*   `include/`: Header files condivisi.
-*   `docs/`: Documentazione tecnica e specifiche.
-*   `main.c`: Punto di ingresso principale.
+## 🛠️ Building
+
+### Requirements
+*   **GCC**: For PC builds (Windows/Linux).
+*   **cc65**: Toolchain required for Commodore 64/128 targets.
+
+### Instructions (Windows)
+
+1.  **PC Version**:
+    ```cmd
+    .\build.bat
+    ```
+    Generates `basic.exe`.
+
+2.  **Commodore 64 Version**:
+    ```cmd
+    .\build_c64.bat
+    ```
+    Generates `basic.prg` (runs on VICE or real hardware).
+
+3.  **Commodore 128 Version**:
+    ```cmd
+    .\build_c128.bat
+    ```
+    Generates `basic128.prg`.
+
+## 📂 Structure
+*   `src/core/`: Platform-agnostic logic (Tokenizer, Parser, Runtime).
+*   `src/platform/`: PAL implementations (`stdio`, `c64`, `c128`).
+*   `include/`: Interface definitions and data structures.
