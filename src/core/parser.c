@@ -34,6 +34,45 @@ void basic_eval_line(BasicState *state, const char *line) {
                 sprintf(buf, BASIC_NUMBER_FMT, token.number_value);
                 state->pal->print(buf);
                 state->pal->newline();
+            } else if (token.type == TOKEN_IDENTIFIER) {
+                // Print variable
+                BasicNumber *var_ptr = basic_get_var(state, token.string_value);
+                if (var_ptr) {
+                    char buf[64];
+                    sprintf(buf, BASIC_NUMBER_FMT, *var_ptr);
+                    state->pal->print(buf);
+                    state->pal->newline();
+                }
+            }
+        } else if (token.type == TOKEN_LET || token.type == TOKEN_IDENTIFIER) {
+            // Assignment
+            Token var_token;
+            BasicNumber *target_ptr = NULL;
+            BasicNumber *source_ptr = NULL;
+
+            if (token.type == TOKEN_LET) {
+                tokenizer_next(&token); // Skip LET, get Identifier
+            }
+            var_token = token; // Save identifier token structure
+            
+            if (token.type == TOKEN_IDENTIFIER) {
+                tokenizer_next(&token); // Get =
+                if (token.type == TOKEN_EQUALS) {
+                    tokenizer_next(&token); // Get Value
+                    target_ptr = basic_get_var(state, var_token.string_value);
+                    
+                    if (target_ptr) {
+                        if (token.type == TOKEN_NUMBER) {
+                            *target_ptr = token.number_value;
+                        } else if (token.type == TOKEN_IDENTIFIER) {
+                             // Simple copy from another variable
+                             source_ptr = basic_get_var(state, token.string_value);
+                             if (source_ptr) {
+                                 *target_ptr = *source_ptr;
+                             }
+                        }
+                    }
+                }
             }
         } else if (token.type == TOKEN_LIST) {
             program_list(state);
@@ -42,7 +81,7 @@ void basic_eval_line(BasicState *state, const char *line) {
         } else if (token.type == TOKEN_NEW) {
             program_clear(state);
         } else if (token.type == TOKEN_END) {
-             // No-op in direct mode, stops run in program mode
+             // No-op
         }
         
         tokenizer_next(&token);

@@ -54,12 +54,13 @@ typedef struct {
     basic_pal_t *pal;
     ProgramLine *program_head;
     int should_exit;
+    BasicNumber variables[26 * 37]; // Support for A-Z + (A-Z)(A-Z0-9)
 } BasicState;
-
 // Core Functions
 void basic_init(BasicState *state, basic_pal_t *pal);
 void basic_run(BasicState *state);
 void basic_eval_line(BasicState *state, const char *line);
+BasicNumber *basic_get_var(BasicState *state, const char *name);
 
 // Component Interfaces
 // Tokenizer
