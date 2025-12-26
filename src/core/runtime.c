@@ -44,6 +44,8 @@ BasicNumber *basic_get_var(BasicState *state, const char *name) {
 
 void basic_run(BasicState *state) {
     ProgramLine *current = state->program_head;
+    state->jump_target = NULL;
+
     while (current && !state->should_exit) {
         // Execute line
         // NOTE: This re-tokenizes every time, which is inefficient but simple for now
@@ -56,7 +58,12 @@ void basic_run(BasicState *state) {
         // essentially treating the body of the line as a command
         basic_eval_line(state, current->source);
         
-        current = current->next;
+        if (state->jump_target) {
+            current = state->jump_target;
+            state->jump_target = NULL; // Clear jump
+        } else {
+            current = current->next;
+        }
     }
     state->should_exit = 0; // Reset for next run
 }

@@ -70,6 +70,7 @@ typedef struct {
     ProgramLine *program_head;
     int should_exit;
     BasicNumber variables[26 * 37]; // Support for A-Z + (A-Z)(A-Z0-9)
+    struct ProgramLine *jump_target;
 } BasicState;
 // Core Functions
 void basic_init(BasicState *state, basic_pal_t *pal);
@@ -87,6 +88,7 @@ void tokenizer_next(Token *token);
 void program_add_line(BasicState *state, int line_number, const char *source);
 void program_clear(BasicState *state);
 void program_list(BasicState *state);
+ProgramLine *program_find_line(BasicState *state, int line_number);
 
 // Parser/Interpreter
 void parser_exec(BasicState *state);

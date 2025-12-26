@@ -200,6 +200,20 @@ void basic_eval_line(BasicState *state, const char *line) {
             program_list(state);
         } else if (token.type == TOKEN_RUN) {
             basic_run(state);
+        } else if (token.type == TOKEN_GOTO) {
+             // GOTO
+             BasicNumber target_line;
+             ProgramLine *dest;
+             
+             tokenizer_next(&token); // Skip GOTO
+             target_line = expr_parse_expression(state, &token);
+             
+             dest = program_find_line(state, (int)target_line);
+             if (dest) {
+                 state->jump_target = dest;
+             } else {
+                 state->pal->print_error("?UNDEF'D STATEMENT ERROR");
+             }
         } else if (token.type == TOKEN_NEW) {
             program_clear(state);
         } else if (token.type == TOKEN_END) {

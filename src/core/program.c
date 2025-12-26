@@ -73,3 +73,14 @@ void program_list(BasicState *state) {
         current = current->next;
     }
 }
+
+ProgramLine *program_find_line(BasicState *state, int line_number) {
+    ProgramLine *current = state->program_head;
+    while (current) {
+        if (current->line_number == line_number) {
+            return current;
+        }
+        current = current->next;
+    }
+    return NULL;
+}
