@@ -78,6 +78,8 @@ void tokenizer_next(Token *token) {
         else if (strcmp(token->string_value, "RUN") == 0) token->type = TOKEN_RUN;
         else if (strcmp(token->string_value, "END") == 0) token->type = TOKEN_END;
         else if (strcmp(token->string_value, "NEW") == 0) token->type = TOKEN_NEW;
+        else if (strcmp(token->string_value, "LOAD") == 0) token->type = TOKEN_LOAD;
+        else if (strcmp(token->string_value, "SAVE") == 0) token->type = TOKEN_SAVE;
         else if (strcmp(token->string_value, "SIN") == 0) token->type = TOKEN_SIN;
         else if (strcmp(token->string_value, "COS") == 0) token->type = TOKEN_COS;
         else if (strcmp(token->string_value, "TAN") == 0) token->type = TOKEN_TAN;

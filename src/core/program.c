@@ -84,3 +84,56 @@ ProgramLine *program_find_line(BasicState *state, int line_number) {
     }
     return NULL;
 }
+
+int program_save(BasicState *state, const char *filename) {
+    FILE *fp;
+    ProgramLine *current;
+    
+    fp = fopen(filename, "w");
+    if (!fp) {
+        return 0; /* Error */
+    }
+    
+    current = state->program_head;
+    while (current) {
+        fprintf(fp, "%d %s\n", current->line_number, current->source);
+        current = current->next;
+    }
+    
+    fclose(fp);
+    return 1; /* Success */
+}
+
+int program_load(BasicState *state, const char *filename) {
+    FILE *fp;
+    static char line[256]; /* Static to avoid stack overflow on C64/C128 */
+    int line_num;
+    char *source_start;
+    
+    fp = fopen(filename, "r");
+    if (!fp) {
+        return 0; /* Error */
+    }
+    
+    /* Clear existing program */
+    program_clear(state);
+    
+    while (fgets(line, sizeof(line), fp)) {
+        /* Remove trailing newline */
+        line[strcspn(line, "\r\n")] = '\0';
+        
+        /* Parse line number */
+        line_num = atoi(line);
+        if (line_num > 0) {
+            /* Find start of source code (after line number and space) */
+            source_start = strchr(line, ' ');
+            if (source_start) {
+                source_start++; /* Skip the space */
+                program_add_line(state, line_num, source_start);
+            }
+        }
+    }
+    
+    fclose(fp);
+    return 1; /* Success */
+}

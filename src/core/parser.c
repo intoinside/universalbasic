@@ -296,6 +296,32 @@ void basic_eval_line(BasicState *state, const char *line) {
              }
         } else if (token.type == TOKEN_NEW) {
             program_clear(state);
+        } else if (token.type == TOKEN_LOAD) {
+            /* LOAD "filename" */
+            tokenizer_next(&token);
+            if (token.type == TOKEN_STRING) {
+                if (program_load(state, token.string_value)) {
+                    state->pal->print("LOADED");
+                    state->pal->newline();
+                } else {
+                    state->pal->print_error("?FILE NOT FOUND ERROR");
+                }
+            } else {
+                state->pal->print_error("?SYNTAX ERROR");
+            }
+        } else if (token.type == TOKEN_SAVE) {
+            /* SAVE "filename" */
+            tokenizer_next(&token);
+            if (token.type == TOKEN_STRING) {
+                if (program_save(state, token.string_value)) {
+                    state->pal->print("SAVED");
+                    state->pal->newline();
+                } else {
+                    state->pal->print_error("?FILE ERROR");
+                }
+            } else {
+                state->pal->print_error("?SYNTAX ERROR");
+            }
         } else if (token.type == TOKEN_END) {
              // No-op
         }

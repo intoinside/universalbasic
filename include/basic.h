@@ -19,6 +19,8 @@ typedef enum {
     TOKEN_RUN,
     TOKEN_END,
     TOKEN_NEW,
+    TOKEN_LOAD,
+    TOKEN_SAVE,
     TOKEN_EQUALS,
     TOKEN_PLUS,
     TOKEN_MINUS,
@@ -91,6 +93,8 @@ void program_add_line(BasicState *state, int line_number, const char *source);
 void program_clear(BasicState *state);
 void program_list(BasicState *state);
 ProgramLine *program_find_line(BasicState *state, int line_number);
+int program_save(BasicState *state, const char *filename);
+int program_load(BasicState *state, const char *filename);
 
 // Parser/Interpreter
 void parser_exec(BasicState *state);
