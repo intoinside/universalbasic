@@ -167,6 +167,24 @@ void basic_eval_line(BasicState *state, const char *line) {
             if (token.type == TOKEN_STRING) {
                 state->pal->print(token.string_value);
                 state->pal->newline();
+            } else if (token.type == TOKEN_IDENTIFIER) {
+                // Check if string var
+                if (strchr(token.string_value, '$') != NULL) {
+                    char **str_ptr = basic_get_str_var(state, token.string_value);
+                    if (str_ptr && *str_ptr) {
+                        state->pal->print(*str_ptr);
+                        state->pal->newline();
+                    } else {
+                         state->pal->newline(); // Empty string
+                    }
+                } else {
+                    // Try printing expression
+                    BasicNumber val = expr_parse_expression(state, &token);
+                    char buf[64];
+                    sprintf(buf, BASIC_NUMBER_FMT, val);
+                    state->pal->print(buf);
+                    state->pal->newline();
+                }
             } else {
                 // Try printing expression
                 BasicNumber val = expr_parse_expression(state, &token);
@@ -179,6 +197,7 @@ void basic_eval_line(BasicState *state, const char *line) {
             // Assignment
             Token var_token;
             BasicNumber *target_ptr = NULL;
+            char **target_str_ptr = NULL;
 
             if (token.type == TOKEN_LET) {
                 tokenizer_next(&token); // Skip LET, get Identifier
@@ -186,13 +205,74 @@ void basic_eval_line(BasicState *state, const char *line) {
             var_token = token; // Save identifier token structure
             
             if (token.type == TOKEN_IDENTIFIER) {
+                // Check if string
+                int is_string = (strchr(var_token.string_value, '$') != NULL);
+
                 tokenizer_next(&token); // Get =
                 if (token.type == TOKEN_EQUALS) {
                     tokenizer_next(&token); // Get Value
-                    // Evaluate Expression
-                    target_ptr = basic_get_var(state, var_token.string_value);
-                    if (target_ptr) {
-                        *target_ptr = expr_parse_expression(state, &token);
+                    
+                    if (is_string) {
+                         target_str_ptr = basic_get_str_var(state, var_token.string_value);
+                         if (target_str_ptr) {
+                             char *current_val = NULL;
+                             
+                             // Initial Value (String Literal or Variable)
+                             if (token.type == TOKEN_STRING) {
+                                 current_val = malloc(strlen(token.string_value) + 1);
+                                 strcpy(current_val, token.string_value);
+                                 tokenizer_next(&token);
+                             } else if (token.type == TOKEN_IDENTIFIER) {
+                                 char **src_str = basic_get_str_var(state, token.string_value);
+                                 if (src_str && *src_str) {
+                                     current_val = malloc(strlen(*src_str) + 1);
+                                     strcpy(current_val, *src_str);
+                                 } else {
+                                     current_val = malloc(1);
+                                     current_val[0] = '\0';
+                                 }
+                                 tokenizer_next(&token);
+                             }
+
+                             if (current_val) {
+                                 // Check for concatenation (+)
+                                 while (token.type == TOKEN_PLUS) {
+                                     char *new_str; 
+                                     tokenizer_next(&token);
+                                     
+                                     if (token.type == TOKEN_STRING) {
+                                         new_str = realloc(current_val, strlen(current_val) + strlen(token.string_value) + 1);
+                                         if (new_str) {
+                                             current_val = new_str;
+                                             strcat(current_val, token.string_value);
+                                         }
+                                         tokenizer_next(&token);
+                                     } else if (token.type == TOKEN_IDENTIFIER) {
+                                         char **src_str = basic_get_str_var(state, token.string_value);
+                                         if (src_str && *src_str) {
+                                              new_str = realloc(current_val, strlen(current_val) + strlen(*src_str) + 1);
+                                              if (new_str) {
+                                                  current_val = new_str;
+                                                  strcat(current_val, *src_str);
+                                              }
+                                         }
+                                         tokenizer_next(&token);
+                                     }
+                                 }
+                                 
+                                 // Assign final result
+                                 if (*target_str_ptr) free(*target_str_ptr);
+                                 *target_str_ptr = current_val;
+                                 
+                                 continue; 
+                             }
+                         }
+                    } else {
+                         // Numeric Assignment
+                         target_ptr = basic_get_var(state, var_token.string_value);
+                         if (target_ptr) {
+                            *target_ptr = expr_parse_expression(state, &token);
+                         }
                     }
                 }
             }

@@ -62,7 +62,7 @@ void tokenizer_next(Token *token) {
     } else if (isalpha(c)) {
         // Keyword or Identifier
         i = 0;
-        while (isalpha(current_input[current_pos])) {
+        while (isalnum(current_input[current_pos]) || current_input[current_pos] == '$') {
              token->string_value[i++] = toupper(current_input[current_pos++]);
              if (i >= TOKEN_MAX_STR - 1) break;
         }
