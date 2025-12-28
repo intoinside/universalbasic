@@ -7,6 +7,7 @@ typedef struct {
     void (*newline)(void);
     int  (*get_char)(void);
     char *(*input_line)(char *buffer, int size);
+    void (*yield)(void);
 } basic_pal_t;
 
 #endif

@@ -54,3 +54,27 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+# Android
+.gradle/
+local.properties
+.cxx/
+build/
+*.apk
+*.aar
+*.jks
+*.keystore
+
+# Android Studio
+.idea/
+*.iml
+*.iws
+.navigation/
+captures/
+.externalNativeBuild/
+cmake_install.cmake
+CMakeCache.txt
+CMakeFiles/
+ninja_log/
+.ninja_deps
+.ninja_log

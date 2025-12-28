@@ -28,9 +28,10 @@ static char *c64_input_line(char *buffer, int size) {
 }
 
 basic_pal_t pal_c64 = {
-    c64_print,
-    c64_print_error,
-    c64_newline,
-    c64_get_char,
-    c64_input_line
+    .print = c64_print,
+    .print_error = c64_print_error,
+    .newline = c64_newline,
+    .get_char = c64_get_char,
+    .input_line = c64_input_line,
+    .yield = NULL
 };

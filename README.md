@@ -22,7 +22,7 @@ UniversalBasic è un interprete BASIC ispirato al **Commodore BASIC 2.0**, proge
 
 ## 🔮 Roadmap e Sviluppi Futuri
 
-*   **Android Porting**: È previsto un porting su Android utilizzando l'NDK. L'architettura modulare permetterà di sostituire il layer di I/O (PAL) per interfacciarsi con una UI Java/Kotlin tramite JNI. Per i dettagli tecnici, vedere la documentazione in `docs/android_porting.md`.
+*   **Android Porting**: Porting completo su Android utilizzando l'NDK. L'architettura modulare PAL permette di interfacciarsi con una UI Kotlin tramite JNI. Per i dettagli tecnici, vedere [BUILD_ANDROID.md](file:///p:/universalbasic/android/BUILD_ANDROID.md).
 *   Completamento set istruzioni BASIC (`IF..THEN`, `FOR..NEXT`, `GOSUB`).
 *   Gestione Array.
 
@@ -52,9 +52,13 @@ UniversalBasic è un interprete BASIC ispirato al **Commodore BASIC 2.0**, proge
     ```
     Genera `basic128.prg`.
 
+4.  **Versione Android**:
+    Vedere [BUILD_ANDROID.md](file:///p:/universalbasic/android/BUILD_ANDROID.md) per le istruzioni dettagliate.
+
 ## 📂 Struttura
 *   `src/core/`: Logica indipendente dalla piattaforma (Tokenizer, Parser, Runtime).
 *   `src/platform/`: Implementazioni del PAL (`stdio`, `c64`, `c128`).
+*   `android/`: Progetto Android NDK completo.
 *   `include/`: Definizioni interfaccia e strutture dati.
 
 ---
@@ -83,7 +87,7 @@ UniversalBasic is a BASIC interpreter inspired by **Commodore BASIC 2.0**, desig
 
 ## 🔮 Roadmap / Future Development
 
-*   **Android Porting**: A port to Android using the NDK is planned. The modular architecture enables swapping the I/O layer (PAL) to interface with a Java/Kotlin UI via JNI. See `docs/android_porting.md` for technical details.
+*   **Android Porting**: Full port to Android using the NDK. The modular PAL architecture enables interfacing with a Kotlin UI via JNI. See [BUILD_ANDROID.md](file:///p:/universalbasic/android/BUILD_ANDROID.md) for technical details.
 *   Complete BASIC instruction set (`IF..THEN`, `FOR..NEXT`, `GOSUB`).
 *   Array handling.
 
@@ -113,7 +117,11 @@ UniversalBasic is a BASIC interpreter inspired by **Commodore BASIC 2.0**, desig
     ```
     Generates `basic128.prg`.
 
+4.  **Android Version**:
+    See [BUILD_ANDROID.md](file:///p:/universalbasic/android/BUILD_ANDROID.md) for detailed instructions.
+
 ## 📂 Structure
 *   `src/core/`: Platform-agnostic logic (Tokenizer, Parser, Runtime).
 *   `src/platform/`: PAL implementations (`stdio`, `c64`, `c128`).
+*   `android/`: Complete Android NDK project.
 *   `include/`: Interface definitions and data structures.

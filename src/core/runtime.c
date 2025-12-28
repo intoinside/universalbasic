@@ -87,6 +87,7 @@ void basic_run(BasicState *state) {
     state->jump_target = NULL;
 
     while (current && !state->should_exit) {
+        if (state->pal->yield) state->pal->yield();
         /* Save FOR depth before executing line */
         old_for_depth = state->for_stack_ptr;
         

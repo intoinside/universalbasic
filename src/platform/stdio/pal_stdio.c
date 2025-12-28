@@ -27,5 +27,6 @@ basic_pal_t pal_stdio = {
     .print_error = stdio_print_error,
     .newline = stdio_newline,
     .get_char = stdio_get_char,
-    .input_line = stdio_input_line
+    .input_line = stdio_input_line,
+    .yield = NULL
 };

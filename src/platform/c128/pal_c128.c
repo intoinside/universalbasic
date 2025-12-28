@@ -26,9 +26,10 @@ static char *c128_input_line(char *buffer, int size) {
 }
 
 basic_pal_t pal_c128 = {
-    c128_print,
-    c128_print_error,
-    c128_newline,
-    c128_get_char,
-    c128_input_line
+    .print = c128_print,
+    .print_error = c128_print_error,
+    .newline = c128_newline,
+    .get_char = c128_get_char,
+    .input_line = c128_input_line,
+    .yield = NULL
 };
