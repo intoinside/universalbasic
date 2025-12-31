@@ -3,6 +3,8 @@
 
 #include "pal.h"
 
+#define APP_VERSION "1.0.1"
+
 // Token types
 typedef enum {
     TOKEN_EOF,

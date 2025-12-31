@@ -81,7 +81,10 @@ Java_com_universalbasic_BasicInterpreter_nativeInit(JNIEnv *env, jobject thiz) {
     interpreter_initialized = 1;
     
     /* Send welcome message */
-    g_state.pal->print("BASIC 2.0 (Android) - Ready.\n");
+    g_state.pal->print("UNIVERSAL BASIC 2.0\n");
+    g_state.pal->print("Version: ");
+    g_state.pal->print(APP_VERSION);
+    g_state.pal->print("\nReady.\n");
 }
 
 JNIEXPORT void JNICALL

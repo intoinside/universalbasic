@@ -20,8 +20,10 @@ int main() {
     size_t len;
 
     basic_init(&state, &CURRENT_PAL);
-
-    state.pal->print("BASIC 2.0 (Retro-Oriented) - Ready.\n");
+    state.pal->print("UNIVERSAL BASIC 2.0\n");
+    state.pal->print("Version: ");
+    state.pal->print(APP_VERSION);
+    state.pal->print("\nReady.\n");
 
     while (1) {
         state.pal->print("READY.\n> ");
